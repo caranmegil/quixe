@@ -579,7 +579,9 @@ function start_game(image) {
     }
 
     /* Pass the game image file along to the VM engine. */
-    all_options.vm.init(image, all_options);
+    // Convert a Uint8Array into an Array
+    const image_array = Array.from(image)
+    all_options.vm.init(image_array, all_options);
 
     started = true;
     
