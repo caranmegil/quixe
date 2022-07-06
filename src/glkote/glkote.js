@@ -1,7 +1,7 @@
 'use strict';
 
 /* GlkOte -- a Javascript display library for IF interfaces
- * GlkOte Library: version 2.3.1.
+ * GlkOte Library: version 2.3.2.
  * Designed by Andrew Plotkin <erkyrath@eblong.com>
  * <http://eblong.com/zarf/glk/glkote.html>
  * 
@@ -859,7 +859,12 @@ function glkote_update(arg) {
                 }
             }
         }
-        
+        if (autorestore.recording_sessionid) {
+            if (recording && recording_state) {
+                recording_state.sessionId = autorestore.recording_sessionid;
+                glkote_log('Transcript recording restored: session ' + recording_state.sessionId + ' "' + recording_state.label + '", destination ' + recording_handler_url);
+            }
+        }
 
         /* For the case of autorestore (only), we short-circuit the paging
            mechanism and assume the player has already seen all the text. */
@@ -1490,6 +1495,7 @@ function accept_inputset(arg) {
             else if (argi.type == 'char') {
                 inputel.on('keypress', evhan_input_char_keypress);
                 inputel.on('keydown', evhan_input_char_keydown);
+                inputel.on('input', evhan_input_char_input);
             }
             inputel.on('focus', win.id, evhan_input_focus);
             //inputel.on('blur', win.id, evhan_input_blur); // Currently has no effect
@@ -1749,6 +1755,10 @@ function glkote_save_allstate() {
                 obj.defcolor = {};
             obj.defcolor[winid] = win.defcolor;
         }
+    }
+
+    if (recording && recording_state) {
+        obj.recording_sessionid = recording_state.sessionId;
     }
     
     return obj;
@@ -2761,6 +2771,32 @@ function evhan_input_char_keypress(ev) {
     return false;
 }
 
+/* Event handler: input events on input fields (character input)
+   The keydown and keypress inputs are unreliable in mobile browsers with
+   virtual keyboards. This handler can handle character input for printable
+   characters, but not function/arrow keys.
+*/
+function evhan_input_char_input(ev) {
+    const char = ev.target.value[0]
+    if (char === '') {
+        return false;
+    }
+    var winid = $(this).data('winid');
+    var win = windowdic.get(winid);
+    if (!win || !win.input) {
+        return true;
+    }
+    ev.target.value = ''
+    send_response('char', win, char);
+    /* Even though we have emptied the input, Android acts as though it still
+       has spaces within it, and won't send backspace keydown events until
+       the phantom spaces have all been deleted. Refocusing seems to fix it. */
+    if (char === ' ') {
+        $(ev.target).trigger('blur').trigger('focus')
+    }
+    return false;
+}
+
 /* Event handler: keydown events on input fields (line input)
 
    Divert the up and down arrow keys to scroll through the command history
@@ -2970,7 +3006,7 @@ function evhan_debug_command(cmd) {
    become the GlkOte global. */
 return {
     classname: 'GlkOte',
-    version:  '2.3.1',
+    version:  '2.3.2',
     init:     glkote_init,
     inited:   glkote_inited,
     update:   glkote_update,
