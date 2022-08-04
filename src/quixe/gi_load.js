@@ -99,6 +99,11 @@
 
 /* All state is contained in GiLoadClass. */
 
+import * as jQuery from 'jquery';
+const $ = jQuery;
+let location = window.location;
+let opera = window.opera;
+
 var GiLoadClass = function() {
 
 /* Start with the defaults. These can be modified later by the game_options
@@ -626,5 +631,7 @@ var GiLoad = new GiLoadClass();
 
 // Node-compatible behavior
 try { exports.GiLoad = GiLoad; exports.GiLoadClass = GiLoadClass; } catch (ex) {};
-
+export {
+    GiLoad,
+}
 /* End of GiLoad library. */

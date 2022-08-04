@@ -1107,9 +1107,11 @@ return {
    I don't know of any other projects which need the backwards
    compatibility support.
 */
-// var GiDispa = new GiDispaClass();
+var GiDispa = GiDispaClass;
 
 // Node-compatible behavior
-try { exports.GiDispaClass = GiDispaClass; } catch (ex) {};
-
+export {
+    GiDispa,
+    GiDispaClass,
+}
 /* End of GiDispa library. */

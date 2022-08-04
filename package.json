@@ -2,5 +2,6 @@
   "name": "quixe",
   "version": "2.2.0",
   "description": "A Glulx VM interpreter written in Javascript",
-  "license": "MIT"
+  "license": "MIT",
+  "type": "module"
 }

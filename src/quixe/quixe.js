@@ -71,6 +71,7 @@
 
 /* All state is contained in QuixeClass. */
 
+import * as jQuery from 'jquery';
 var QuixeClass = function() {
 
 /* Create the "self" object. (No relation to the Inform "self" global.) */
@@ -216,8 +217,8 @@ function show_exception(ex) {
 function qlog(msg) {
     if (window.console && console.log)
         console.log(msg);
-    else if (window.opera && opera.postError)
-        opera.postError(msg);
+    // else if (window.opera && opera.postError)
+    //     opera.postError(msg);
 }
 
 /* This returns a string displaying an object and all its properties.
@@ -7420,6 +7421,8 @@ return {
 var Quixe = new QuixeClass();
 
 // Node-compatible behavior
-try { exports.Quixe = Quixe; exports.QuixeClass = QuixeClass; } catch (ex) {};
+export {
+    Quixe,
+}
 
 /* End of Quixe library. */
